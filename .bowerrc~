@@ -1,0 +1,11 @@
+{
+  "directory": "bower_components",
+  "json": "bower.json",
+  "registry": {
+    "register": "http://hawk:8888",
+    "search": [
+      "https://bower.herokuapp.com",
+      "http://hawk:8888"
+    ]
+  }
+}

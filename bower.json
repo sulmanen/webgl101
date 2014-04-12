@@ -1,0 +1,24 @@
+{
+  "name": "WEbGL",
+  "version": "0.0.1",
+  "authors": [
+    "Samuli Ulmanen <samuli.ulmanen@rovio.com>"
+  ],
+  "description": "testing webgl rendering",
+  "main": "basic.js",
+  "keywords": [
+    "webgl",
+    "getstarted"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "gl-matrix": "~2.2.1"
+  }
+}
