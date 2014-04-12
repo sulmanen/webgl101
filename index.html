@@ -2,11 +2,31 @@
 <html>
   <head>
     <title>Basics</title>
-  </head>
 
+
+  </head>
   <body>
     <canvas id="gl" width="800px" height="800px"></canvas>
+
+    <script id="shader-fs" type="x-shader/x-fragment">
+      void main(void) {
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+      }
+    </script>
+
+    <script id="shader-vs" type="x-shader/x-vertex">
+      attribute vec3 aVertexPosition;
+
+      uniform mat4 uMVMatrix;
+      uniform mat4 uPMatrix;
+
+      void main(void) {
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+      }
+    </script>
+    <script src="bower_components/sylvester/sylvester.js"></script>
+    <script src="bower_components/glUtils/glUtils.js"></script>
     <script src="bower_components/gl-matrix/dist/gl-matrix.js"></script>
-    <script src="basic.js"></script>
+    <script src="basic2.js"></script>
   </body>
 </html>

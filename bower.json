@@ -19,6 +19,8 @@
     "tests"
   ],
   "dependencies": {
-    "gl-matrix": "~2.2.1"
+    "gl-matrix": "~2.2.1",
+    "glUtils": "0.0.1",
+    "sylvester": "~0.1.3"
   }
 }
