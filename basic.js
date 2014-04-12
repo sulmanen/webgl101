@@ -5,9 +5,11 @@
     var canvas;
     var gl;
     var squareVerticesBuffer;
+    var squareVerticesColorBuffer;
     var mvMatrix;
     var shaderProgram;
     var vertexPositionAttribute;
+    var vertexColorAttribute;
     var perspectiveMatrix;
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -56,6 +58,17 @@
         ];
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+        var colors = [
+            1.0,  1.0,  1.0,  1.0,    // white
+            1.0,  0.0,  0.0,  1.0,    // red
+            0.0,  1.0,  0.0,  1.0,    // green
+            0.0,  0.0,  1.0,  1.0     // blue
+        ];
+
+        squareVerticesColorBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesColorBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
     }
 
 
@@ -120,6 +133,9 @@
 
         vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
         gl.enableVertexAttribArray(vertexPositionAttribute);
+
+        vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
+        gl.enableVertexAttribArray(vertexColorAttribute);
     }
 
     function initWebGL(canvas) {
@@ -150,6 +166,10 @@
 
         gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
         gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesColorBuffer);
+        gl.vertexAttribPointer(vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
+
         setMatrixUniforms();
 
         // this draws the arrays
