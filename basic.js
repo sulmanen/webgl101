@@ -29,12 +29,10 @@
 
             // Initialize the shaders; this is where all the lighting for the
             // vertices and so forth is established.
-
             initShaders();
 
             // Here's where we call the routine that builds all the objects
             // we'll be drawing.
-
             initBuffers();
 
             // Set up to draw the scene periodically.
@@ -144,11 +142,11 @@
     function drawScene() {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        perspectiveMatrix = makePerspective(45, 640.0/480.0, 0.1, 100.0);
+        perspectiveMatrix = makePerspective(45.0, 1, 0.1, 100.0);
 
         // move square away from camera 6 units
         loadIdentity();
-        mvTranslate([-0.0, 0.0, -6.0]);
+        mvTranslate([0.0, 0.0, -20.0]);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
         gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
