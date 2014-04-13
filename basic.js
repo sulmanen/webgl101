@@ -1,16 +1,24 @@
 (function(){
     'use strict';
 
-    var horizAspect = 480.0/640.0;
-    var canvas;
-    var gl;
-    var squareVerticesBuffer;
-    var squareVerticesColorBuffer;
-    var mvMatrix;
-    var shaderProgram;
-    var vertexPositionAttribute;
-    var vertexColorAttribute;
-    var perspectiveMatrix;
+    var horizAspect = 480.0/640.0,
+        squareRotation = 0.0,
+        canvas,
+        gl,
+        squareVerticesBuffer,
+        squareVerticesColorBuffer,
+        mvMatrix,
+        perspectiveMatrix,
+        shaderProgram,
+        vertexPositionAttribute,
+        vertexColorAttribute,
+        lastSquareUpdateTime,
+        squareXOffset = 0.0,
+        squareYOffset = 0.0,
+        squareZOffset = 0.0,
+        xIncValue = 0.2,
+        yIncValue = -0.4,
+        zIncValue = 0.3;
 
     document.addEventListener('DOMContentLoaded', function() {
         start();
@@ -22,7 +30,6 @@
         initWebGL(canvas);      // Initialize the GL context
 
         // Only continue if WebGL is available and working
-
         if (gl) {
             gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
             gl.clearDepth(1.0);                 // Clear everything
@@ -42,8 +49,6 @@
             setInterval(drawScene, 15);
         }
     }
-
-
 
     function initBuffers() {
         squareVerticesBuffer = gl.createBuffer();
@@ -156,6 +161,9 @@
     }
 
     function drawScene() {
+        var currentTime = (new Date).getTime();
+
+        // clear
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         perspectiveMatrix = makePerspective(45.0, 1, 0.1, 100.0);
@@ -163,6 +171,27 @@
         // move square away from camera 6 units
         loadIdentity();
         mvTranslate([0.0, 0.0, -20.0]);
+
+        // rotation
+        if (lastSquareUpdateTime) {
+            var delta = currentTime -lastSquareUpdateTime;
+            squareRotation += (30 * delta) / 1000.0;
+            squareXOffset += xIncValue * ((30 * delta) / 1000.0);
+            squareYOffset += yIncValue * ((30 * delta) / 1000.0);
+            squareZOffset += zIncValue * ((30 * delta) / 1000.0);
+
+            if (Math.abs(squareYOffset) > 2.5) {
+                xIncValue = -xIncValue;
+                yIncValue = -yIncValue;
+                zIncValue = -zIncValue;
+            }
+        }
+
+        lastSquareUpdateTime = currentTime;
+
+        mvPushMatrix();
+        mvRotate(squareRotation, [1, 0, 1]);
+
 
         gl.bindBuffer(gl.ARRAY_BUFFER, squareVerticesBuffer);
         gl.vertexAttribPointer(vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
@@ -174,6 +203,9 @@
 
         // this draws the arrays
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+        // restore original rotation
+        mvPopMatrix();
     }
 
     function loadIdentity() {
@@ -194,5 +226,32 @@
 
         var mvUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
         gl.uniformMatrix4fv(mvUniform, false, new Float32Array(mvMatrix.flatten()));
+    }
+
+    var mvMatrixStack = [];
+
+    function mvPushMatrix(m) {
+        if (m) {
+            mvMatrixStack.push(m.dup());
+            mvMatrix = m.dup();
+        } else {
+            mvMatrixStack.push(mvMatrix.dup());
+        }
+    }
+
+    function mvPopMatrix() {
+        if (!mvMatrixStack.length) {
+            throw("Can't pop from an empty matrix stack.");
+        }
+
+        mvMatrix = mvMatrixStack.pop();
+        return mvMatrix;
+    }
+
+    function mvRotate(angle, v) {
+        var inRadians = angle * Math.PI / 180.0;
+
+        var m = Matrix.Rotation(inRadians, $V([v[0], v[1], v[2]])).ensure4x4();
+        multMatrix(m);
     }
 }());
